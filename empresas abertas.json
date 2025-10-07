@@ -1,0 +1,592 @@
+{
+  "name": "empresas abertas",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "return items.map(item => {\n  let tel = String(item.json.telefone || '').replace(/\\D/g, '');\n\n  \n  if (/^55\\d{10,11}$/.test(tel)) {\n    item.json.telefone = tel;\n    return item;\n  }\n  if (/^\\d{10,11}$/.test(tel)) {\n    const ddd = tel.slice(0, 2);\n    let numero = tel.slice(2);\n\n \n    if (numero.length === 8) {\n      numero = '9' + numero;\n    }\n\n    if (numero.length === 9) {\n      item.json.telefone = '55' + ddd + numero;\n      return item;\n    }\n  }\n\n\n  item.json.telefone = tel;\n  return item;\n});\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -448,
+        1088
+      ],
+      "id": "8d954b1e-b956-4b2f-b7e1-cb02ab8a445f",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "content": "TRATAMENTO DE LEADS (EMPRESAS EM TEMPO REAL)\n",
+        "height": 560,
+        "width": 860,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1680,
+        944
+      ],
+      "typeVersion": 1,
+      "id": "19b5b85d-047f-4886-8df4-28beba07828c",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "processamento e formatação.\n\n",
+        "height": 560,
+        "width": 880,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -816,
+        944
+      ],
+      "typeVersion": 1,
+      "id": "fa320e94-7b48-4578-93e7-c9484d6b1a7b",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "Envio de mensagem;\natualização de lead na planilha\n",
+        "height": 560,
+        "width": 900,
+        "color": 2
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        64,
+        944
+      ],
+      "typeVersion": 1,
+      "id": "35e2ba81-70c7-422a-91eb-041a4cc3a82f",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "tempo contra bloqueio\n",
+        "height": 560,
+        "width": 460,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        960,
+        944
+      ],
+      "typeVersion": 1,
+      "id": "0e4775fc-84ce-4c51-bd20-ae248a6afe89",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -736,
+        1072
+      ],
+      "id": "28695abb-c9f8-43bc-ba5a-9a0f603ef06b",
+      "name": "Loop Over Items1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "name": "Replace Me1",
+      "typeVersion": 1,
+      "position": [
+        832,
+        944
+      ],
+      "id": "61d6f052-99c8-4898-a3cd-39170541b889"
+    },
+    {
+      "parameters": {
+        "amount": "={{ $json.delaySeconds }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1264,
+        1280
+      ],
+      "id": "588cca10-969b-4269-a733-8ea1374e55e5",
+      "name": "Wait1",
+      "webhookId": "622f5e13-e61a-4e5b-95a9-237f5f66e645"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1ORU_L3UKSwD2nISKt18is9i73bub20KsXW-OejPTlfU",
+          "mode": "list",
+          "cachedResultName": "DISPAROS WHATSAPP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ORU_L3UKSwD2nISKt18is9i73bub20KsXW-OejPTlfU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "EMPRESAS_ABERTAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ORU_L3UKSwD2nISKt18is9i73bub20KsXW-OejPTlfU/edit#gid=0"
+        },
+        "event": "rowUpdate",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1616,
+        1088
+      ],
+      "id": "dff0f452-5ea8-44ab-86e4-e8f6113bdb17",
+      "name": "Google Sheets Trigger1",
+      "credentials": {
+        "googleSheetsTriggerOAuth2Api": {
+          "id": "AkH1RzX9FFMqh69R",
+          "name": "Google Sheets Trigger account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "89faa61a-4bf4-44a1-bd86-ec345d527a9c",
+              "name": "ROW_NUMBER",
+              "value": "={{ $('Google Sheets Trigger1').item.json.ROW_NUMBER }}",
+              "type": "number"
+            },
+            {
+              "id": "a669f594-f3a8-4e80-a9c4-3cfcb7680c0e",
+              "name": "status",
+              "value": "ENVIADO",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        400,
+        1024
+      ],
+      "id": "54b7d197-697f-4249-9139-9eefe1eb6299",
+      "name": "Edit Fields1"
+    },
+    {
+      "parameters": {
+        "jsCode": "const min = 60; \nconst max = 30; \nconst delay = Math.floor(Math.random() * (max - min + 1)) + min;\n\nitems[0].json.delaySeconds = delay;\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1232,
+        1008
+      ],
+      "id": "e96d1200-4445-4c51-9b6b-d6faaa841a68",
+      "name": "temporizador1"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1ORU_L3UKSwD2nISKt18is9i73bub20KsXW-OejPTlfU",
+          "mode": "list",
+          "cachedResultName": "DISPAROS WHATSAPP",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ORU_L3UKSwD2nISKt18is9i73bub20KsXW-OejPTlfU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "EMPRESAS_ABERTAS",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1ORU_L3UKSwD2nISKt18is9i73bub20KsXW-OejPTlfU/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ROW_NUMBER": "={{ $json.ROW_NUMBER }}",
+            "STATUS": "={{ $json.status }}"
+          },
+          "matchingColumns": [
+            "ROW_NUMBER"
+          ],
+          "schema": [
+            {
+              "id": "ROW_NUMBER",
+              "displayName": "ROW_NUMBER",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "DATA SCRIPT",
+              "displayName": "DATA SCRIPT",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "ABERTURA",
+              "displayName": "ABERTURA",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "TELEFONE",
+              "displayName": "TELEFONE",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "RAZÃO SOCIAL",
+              "displayName": "RAZÃO SOCIAL",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "CNPJ",
+              "displayName": "CNPJ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "STATUS",
+              "displayName": "STATUS",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.6,
+      "position": [
+        832,
+        1120
+      ],
+      "id": "bd025247-7af7-47ee-8a14-d64e8be00bd7",
+      "name": "status de envio1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "5dNFV9W3sz6Zx2gY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://evolution.estrelarconsultoria.com/message/sendText/{{ $json.instancia }}\n",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "apikey",
+              "value": "={{ $json.apikey }}"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n    \"number\": \"{{ $json.telefone }}\",\n    \"text\": \"Aqui é da Estrelar C6 Empresas!\\n\\nQue tal uma oferta especial para sua empresa *{{ $json['razão social'] }}*? \\nSeu CNPJ: *{{ $json.cnpj }}* está pronto e disponível para acessar nossas ofertas exclusivas de linhas de crédito com assessoria personalizada junto ao C6 Bank:\\n\\n💳 Conta + Cartão sem custo\\n📲 PIX ilimitado e gratuito\\n📊 Crédito pré-aprovado (Capital de giro e Limites) (Sujeito a análise)\\n📄 2.000 Boletos grátis via lote\\n💰 Maquininha Adesão R$0\\n🤝 Gerente de relacionamento PJ atendimento 100% humanizado.\\n\\n*Aceita ser indicado pelo nosso escritório para abrir sua conta PJ gratuitamente no C6 Bank?*\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        160,
+        1024
+      ],
+      "id": "c61af31c-0a1a-4ebb-b495-146264283996",
+      "name": "evo1",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const instancias = [\n  {nome: 'empresa15', apikey: 'CF75F13DEA0B-4C15-A586-50165DCA1D80'},\n  {nome: 'empresa1', apikey: '7707BD17AE08-4F97-8E66-9CFDDE95CC14'},\n  {nome: 'empresa16', apikey: 'B7D3E52ECC28-4C1F-A535-1E08CC7AD48B'},\n   {nome: 'empresa6', apikey: 'E59F8BDF2BFB-4FDC-8DBD-9057FE9049D4'},\n];\n \n\nreturn items.map(item => {\n  const sorteada = instancias[Math.floor(Math.random() * instancias.length)];\n  item.json.instancia = sorteada.nome;\n  item.json.apikey = sorteada.apikey;\n  return item;\n\n  \n});\n\n "
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -128,
+        1024
+      ],
+      "id": "b6e822d3-da6a-41de-9107-9c0cdde325b5",
+      "name": "random1"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nitems.sort((a, b) => {\n  return b.json.ROW_NUMBER - a.json.ROW_NUMBER;\n});\nreturn items;\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1040,
+        1072
+      ],
+      "id": "50cdcca7-e4ee-47d1-a0eb-0d3bd882e7ff",
+      "name": "envio reverso1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.STATUS }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "empty",
+                      "singleValue": true
+                    },
+                    "id": "3bd4f55b-cd97-4e46-808a-83a90914eb7b"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": "={{ true }}",
+              "outputKey": "não enviado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "ec5a21ae-f468-43ee-b14f-51dd410b936b",
+                    "leftValue": "={{ $json.STATUS }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "enviado"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -1408,
+        1088
+      ],
+      "id": "f343e9c6-c755-40b0-a368-ad535259493a",
+      "name": "IF1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "random1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items1": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Replace Me1": {
+      "main": [
+        [
+          {
+            "node": "temporizador1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets Trigger1": {
+      "main": [
+        [
+          {
+            "node": "IF1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Replace Me1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "status de envio1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "temporizador1": {
+      "main": [
+        [
+          {
+            "node": "Wait1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "evo1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "random1": {
+      "main": [
+        [
+          {
+            "node": "evo1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "envio reverso1": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "IF1": {
+      "main": [
+        [
+          {
+            "node": "envio reverso1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "6f07bfe7-a1d3-48db-9f6f-529b40aea412",
+  "meta": {
+    "instanceId": "3bbace708eb8d645cda36185b13729ee668501f5cdd17b12c7e635d7df8ba7ca"
+  },
+  "id": "Ttwb3pSUY77roAzk",
+  "tags": []
+}
